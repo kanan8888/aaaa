@@ -3,19 +3,20 @@ package az.myecommerceapp.controller;
 import az.myecommerceapp.dto.UserLoginDto;
 import az.myecommerceapp.dto.UserRegisterDto;
 import az.myecommerceapp.dto.UserResetPasswordDto;
+import az.myecommerceapp.entity.User;
 import az.myecommerceapp.repository.UserRepository;
 import az.myecommerceapp.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/user/v1")
+@RequestMapping("/v1/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserServiceImpl userServiceImpl;
@@ -36,6 +37,25 @@ public class UserController {
         return ResponseEntity.ok("Password reset successfully");
     }
 
+    @GetMapping("get-all")
+    public List<User> getAll() {
+        return userServiceImpl.getAllUsers();
+    }
+    @GetMapping("/get-by-id/{id}")
+    public Optional<User> getById(@PathVariable Long id) {
+        return userServiceImpl.getUserById(id);
+    }
+
+    @DeleteMapping("/delete-user-by-id/{id}")
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
+        userServiceImpl.deleteUserById(id);
+        return ResponseEntity.ok("User deleted successfully");
+    }
 
 
 }
+
+
+
+
+

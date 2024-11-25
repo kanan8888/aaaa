@@ -9,12 +9,16 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
+    @Override
     public void registerUser(UserRegisterDto userRegisterDto) {
         User user = modelMapper.map(userRegisterDto, User.class);
 
@@ -27,17 +31,15 @@ public class UserServiceImpl {
         userRepository.save(user);
     }
 
-    public boolean loginUser(UserLoginDto userLoginDto) {
-        User user = userRepository.findByUserName(userLoginDto.getUsername());
-        if (user == null) {
-            throw new RuntimeException("User not found");
+    @Override
+    public void loginUser(UserLoginDto userLoginDto) {
+        User user = userRepository.findByUserNameAndPassword(userLoginDto.getUserName(), userLoginDto.getPassword());
+        if (user == null ) {
+            throw new RuntimeException("Wrong username or password");
         }
-        if (!user.getPassword().equals(userLoginDto.getPassword())) {
-            throw new RuntimeException("Wrong password");
-        }
-        return true;
     }
 
+    @Override
     public void resetPasswordUser(UserResetPasswordDto userResetPasswordDto){
         User user = userRepository.findByEmail(userResetPasswordDto.getEmail());
         if (user != null) {
@@ -51,5 +53,23 @@ public class UserServiceImpl {
             throw new RuntimeException("User not found");
         }
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public Optional<User> getUserById(Long id) {
+        return Optional.ofNullable(userRepository.findById(id))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    @Override
+    public void deleteUserById(Long id){
+        userRepository.deleteById(id);
+    }
+
+
 
 }

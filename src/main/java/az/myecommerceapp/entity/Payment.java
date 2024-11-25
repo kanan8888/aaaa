@@ -1,6 +1,6 @@
 package az.myecommerceapp.entity;
 
-import az.myecommerceapp.enums.ProductStatus;
+import az.myecommerceapp.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,33 +13,28 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Products")
+@Table(name = "Payments")
 @FieldDefaults(level= AccessLevel.PRIVATE)
-public class Product {
+public class Payment {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-    @Column(nullable = false)
-    String name;
-
-    @Column(length = 500)
-    private String description;
-
-    @Column(nullable = false)
-    BigDecimal price;
-
-    @Column(nullable = false)
-    Integer stock;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    Category category;
+    @OneToOne
+    @JoinColumn(name = "order_id", referencedColumnName = "id", unique = true, nullable = false)
+    Order order;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    ProductStatus status;
+    PaymentStatus status;
 
+    @Column(nullable = false)
+    BigDecimal amount;
+
+    LocalDateTime paymentDate;
+
+    @Column(nullable = false, updatable = false)
     LocalDateTime createdAt;
 
     LocalDateTime updatedAt;

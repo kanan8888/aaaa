@@ -1,6 +1,5 @@
 package az.myecommerceapp.dto;
 
-import jakarta.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
